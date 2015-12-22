@@ -9,6 +9,8 @@
 
 int nextTest = 0;
 
+double totalTime = 0.f;
+
 void AABBTest()
 {
 	LCG rng(123);
@@ -32,6 +34,7 @@ void AABBTest()
 				++numCollisions;
 		}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumCollisions = 14712812;
 	if (numCollisions != expectedNumCollisions)
@@ -65,6 +68,7 @@ void OBBTest()
 				++numCollisions;
 		}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumCollisions = 4879382;
 	if (numCollisions != expectedNumCollisions)
@@ -90,6 +94,7 @@ void SphereTest()
 				++numCollisions;
 		}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumCollisions = 15821386;
 	if (numCollisions != expectedNumCollisions)
@@ -115,6 +120,7 @@ void CapsuleTest()
 				++numCollisions;
 		}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumCollisions = 3358668;
 	if (numCollisions != expectedNumCollisions)
@@ -152,6 +158,7 @@ void PolyhedronTest()
 //				++numCollisions;
 		}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumCollisions = 51728;
 	if (numCollisions != expectedNumCollisions)
@@ -181,6 +188,7 @@ void TriangleTriangleTest()
 				++numCollisions;
 		}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumCollisions = 568430;
 	if (numCollisions != expectedNumCollisions)
@@ -217,6 +225,7 @@ void RayTriangleTest()
 				++numCollisions;
 		}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumCollisions = 596509;
 	if (numCollisions != expectedNumCollisions)
@@ -253,6 +262,7 @@ void AABBTransformTest()
 		numDegenerate += aabb[i].IsDegenerate();
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumDegenerate = 0;
 	if (numDegenerate != expectedNumDegenerate)
@@ -289,6 +299,7 @@ void OBBTransformTest()
 		numDegenerate += obb[i].IsDegenerate();
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumDegenerate = 0;
 	if (numDegenerate != expectedNumDegenerate)
@@ -320,6 +331,7 @@ void CapsuleTransformTest()
 		numDegenerate += c[i].IsDegenerate();
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumDegenerate = 0;
 	if (numDegenerate != expectedNumDegenerate)
@@ -360,6 +372,7 @@ void PolyhedronTransformTest()
 			++numDegenerate;
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 
 	const int expectedNumDegenerate = 0;
 	if (numDegenerate != expectedNumDegenerate)
@@ -384,6 +397,7 @@ void BoundingAABBTest()
 		totalVolume += aabb.Volume();
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 	printf("Bounding AABB: %f msecs (volume: %f)\n", Clock::TimespanToMillisecondsD(t0, t1), totalVolume);
 }
 
@@ -403,6 +417,7 @@ void BoundingOBBTest()
 		totalVolume += obb.Volume();
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 	printf("Bounding OBB: %f msecs (volume: %f)\n", Clock::TimespanToMillisecondsD(t0, t1), totalVolume);
 }
 
@@ -422,6 +437,7 @@ void BoundingSphereTest()
 		totalVolume += s.Volume();
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 	printf("Bounding Sphere: %f msecs (volume: %f)\n", Clock::TimespanToMillisecondsD(t0, t1), totalVolume);
 }
 
@@ -441,6 +457,7 @@ void ConvexHullTest()
 		totalVolume += p.Volume();
 	}
 	tick_t t1 = Clock::Tick();
+	totalTime += Clock::TimespanToMillisecondsD(t0, t1);
 	printf("Convex hull: %f msecs (volume: %f)\n", Clock::TimespanToMillisecondsD(t0, t1), totalVolume);
 }
 
@@ -465,7 +482,7 @@ void tick()
 	case 14: ConvexHullTest(); break;
 	default:
 		nextTest = -1;
-		printf("Done!\n");
+		printf("\nAll tests done! Total accumulated time (lower is better): %f msecs\n", totalTime);
 #ifdef __EMSCRIPTEN__
 		emscripten_cancel_main_loop();
 		exit(0);
@@ -478,7 +495,7 @@ void tick()
 
 int main()
 {
-	printf("Hello!\n");
+	printf("Running benchmarks (with resulting times, lower is better):\n\n");
 #ifdef __EMSCRIPTEN__
 	emscripten_set_main_loop(tick, 0, 0);
 #else
